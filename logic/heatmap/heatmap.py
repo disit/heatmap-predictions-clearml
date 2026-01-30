@@ -220,7 +220,7 @@ def generate_heatmap(params: dict):
     
     interpolated_heatmap = create_interpolated_heatmap(
         interpolated_df, heatmap_name, metric_name, from_date_time, to_date_time, 
-        clustered, step_size, epsg_projection, file_flag
+        clustered, step_size, epsg_projection, file_flag, model_method
     )
     
     logger.debug("--------- INTERPOLATED DATA LIST CREATION - END ---------")
@@ -231,7 +231,7 @@ def generate_heatmap(params: dict):
     
     upload_res = upload_heatmap_to_snap4city(
         token, heat_map_model_name, broker, sensor_category, heatmap_name, heatmap_name, color_map, 
-        data[['long', 'lat']], interpolated_df, from_date_time, to_date_time
+        data[['long', 'lat']], interpolated_df, from_date_time, to_date_time, model_method
     )
     status.device = upload_res.get('device', {})
     status.device_data = upload_res.get('device_data', {})

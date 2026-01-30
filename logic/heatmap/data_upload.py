@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # --- Data Formatting Functions ---
 
-def create_interpolated_heatmap(interpolated_data, heatmap_name, metric_name, from_date_time, to_date_time, clustered, step_size, epsg_projection, file_flag):
+def create_interpolated_heatmap(interpolated_data, heatmap_name, metric_name, from_date_time, to_date_time, clustered, step_size, epsg_projection, file_flag, model_method):
     """
     Formats the interpolated grid results into a specific JSON structure required by the Snap4City backend.
     
@@ -28,7 +28,7 @@ def create_interpolated_heatmap(interpolated_data, heatmap_name, metric_name, fr
         step_size (float): The cell size of the grid.
         epsg_projection (int): EPSG code for coordinate projection.
         file_flag (int): Flag indicating if output is a file.
-
+        model_method (str): The method used for the model (e.g., interpolation technique).
     Returns:
         dict: A dictionary containing a list of 'attributes' formatted for API ingestion.
     """
@@ -39,7 +39,7 @@ def create_interpolated_heatmap(interpolated_data, heatmap_name, metric_name, fr
             'id': i,
             'mapName': heatmap_name,
             'metricName': metric_name,
-            'description': f"Average from {from_date_time} to {to_date_time}",
+            'description': f"Average from {from_date_time} to {to_date_time} - Method: {model_method}",
             'clustered': clustered,
             'latitude': row['X'],  # UTM Easting
             'longitude': row['Y'], # UTM Northing
@@ -59,7 +59,7 @@ def create_interpolated_heatmap(interpolated_data, heatmap_name, metric_name, fr
 # --- Device Management Functions ---
 
 def upload_heatmap_to_snap4city(token, heat_map_model_name, broker, subnature, device_name, heatmap_name, color_map, 
-                                coordinates, interpolated_data, from_date_time, to_date_time):
+                                coordinates, interpolated_data, from_date_time, to_date_time, model_method):
     """
     Coordinates the creation of an IoT device and the subsequent upload of its metadata to Snap4City.
     """
@@ -102,7 +102,7 @@ def upload_heatmap_to_snap4city(token, heat_map_model_name, broker, subnature, d
         "bounding_box": geo_json_poly,
         "size": len(interpolated_data),
         "date_observed": f"{to_date_time}Z",
-        "description": f"Average from {from_date_time} to {to_date_time}",
+        "description": f"Average from {from_date_time} to {to_date_time} - Method: {model_method}",
         "maximum_date": to_date_time,
         "minimum_date": from_date_time
     }
